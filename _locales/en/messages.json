@@ -1,0 +1,41 @@
+{
+  "extName": {
+    "message": "GeminiGhost"
+  },
+  "extDescription": {
+    "message": "Instantly launch a Gemini temporary chat session with a keyboard shortcut — no history, no trace"
+  },
+  "openTempChat": {
+    "message": "Start Temporary Chat"
+  },
+  "openTempChatDescription": {
+    "message": "Open Gemini Temporary Chat"
+  },
+  "opening": {
+    "message": "Opening..."
+  },
+  "shortcutSettings": {
+    "message": "Shortcut Settings"
+  },
+  "shortcutOr": {
+    "message": "or"
+  },
+  "optionsTitle": {
+    "message": "Gemini Temp Chat - Settings"
+  },
+  "optionsSectionShortcut": {
+    "message": "Shortcut"
+  },
+  "optionsShortcutLabel": {
+    "message": "Open Temporary Chat"
+  },
+  "optionsShortcutHint": {
+    "message": "To change the shortcut, go to"
+  },
+  "optionsShortcutHintLink": {
+    "message": "chrome://extensions/shortcuts"
+  },
+  "tooltipLabel": {
+    "message": "Temporary Chat"
+  }
+}

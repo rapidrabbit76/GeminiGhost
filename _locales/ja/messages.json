@@ -1,0 +1,41 @@
+{
+  "extName": {
+    "message": "GeminiGhost"
+  },
+  "extDescription": {
+    "message": "ショートカット一発でGeminiの一時チャットを即起動 — 履歴なし、痕跡なし"
+  },
+  "openTempChat": {
+    "message": "一時チャットを開始"
+  },
+  "openTempChatDescription": {
+    "message": "Gemini 一時チャットを開く"
+  },
+  "opening": {
+    "message": "開いています..."
+  },
+  "shortcutSettings": {
+    "message": "ショートカット設定"
+  },
+  "shortcutOr": {
+    "message": "または"
+  },
+  "optionsTitle": {
+    "message": "Gemini 一時チャット - 設定"
+  },
+  "optionsSectionShortcut": {
+    "message": "ショートカット"
+  },
+  "optionsShortcutLabel": {
+    "message": "一時チャットを開く"
+  },
+  "optionsShortcutHint": {
+    "message": "ショートカットを変更するには"
+  },
+  "optionsShortcutHintLink": {
+    "message": "chrome://extensions/shortcuts"
+  },
+  "tooltipLabel": {
+    "message": "一時チャット"
+  }
+}

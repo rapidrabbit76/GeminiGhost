@@ -1,0 +1,41 @@
+{
+  "extName": {
+    "message": "GeminiGhost"
+  },
+  "extDescription": {
+    "message": "단축키 한 번으로 Gemini 임시 채팅을 즉시 시작합니다 — 기록 없이, 흔적 없이"
+  },
+  "openTempChat": {
+    "message": "임시 채팅 시작"
+  },
+  "openTempChatDescription": {
+    "message": "Gemini 임시 채팅 열기"
+  },
+  "opening": {
+    "message": "여는 중..."
+  },
+  "shortcutSettings": {
+    "message": "단축키 설정"
+  },
+  "shortcutOr": {
+    "message": "또는"
+  },
+  "optionsTitle": {
+    "message": "Gemini 임시 채팅 - 설정"
+  },
+  "optionsSectionShortcut": {
+    "message": "단축키"
+  },
+  "optionsShortcutLabel": {
+    "message": "임시 채팅 열기"
+  },
+  "optionsShortcutHint": {
+    "message": "단축키를 변경하려면"
+  },
+  "optionsShortcutHintLink": {
+    "message": "chrome://extensions/shortcuts"
+  },
+  "tooltipLabel": {
+    "message": "임시 채팅"
+  }
+}
