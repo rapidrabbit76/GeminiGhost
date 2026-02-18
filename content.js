@@ -1,3 +1,6 @@
+const SIDEBAR_BUTTON_SELECTOR = '[data-test-id="side-nav-menu-button"]';
+const SIDEBAR_BUTTON_ARIA_LABELS = ["기본 메뉴", "Main menu"];
+
 const TEMP_CHAT_SELECTORS = [
   '[data-test-id="temp-chat-button"]',
   '[aria-label="임시 채팅"]',
@@ -64,13 +67,42 @@ function waitForButton(timeout = 5000) {
   });
 }
 
+function findSidebarButton() {
+  const btn = document.querySelector(SIDEBAR_BUTTON_SELECTOR);
+  if (btn) return btn;
+
+  const buttons = document.querySelectorAll("button");
+  for (const b of buttons) {
+    const label = b.getAttribute("aria-label");
+    if (SIDEBAR_BUTTON_ARIA_LABELS.includes(label)) return b;
+  }
+
+  return null;
+}
+
+function toggleSidebar() {
+  const btn = findSidebarButton();
+  if (btn) {
+    btn.click();
+    return;
+  }
+}
+
 function t(key) {
   return chrome.i18n.getMessage(key) || key;
 }
 
-function getShortcutLabel() {
+function formatShortcut(shortcut) {
+  if (!shortcut) return "";
   const isMac = navigator.platform.toUpperCase().includes("MAC");
-  return isMac ? "⌃⇧O" : "Ctrl+Shift+O";
+  if (!isMac) return shortcut;
+  return shortcut
+    .replace("MacCtrl", "⌃")
+    .replace("Ctrl", "⌃")
+    .replace("Alt", "⌥")
+    .replace("Shift", "⇧")
+    .replace("Command", "⌘")
+    .replace(/\+/g, "");
 }
 
 function createTooltip() {
@@ -95,16 +127,23 @@ function createTooltip() {
   return el;
 }
 
+let cachedTempChatShortcut = null;
+
+chrome.commands.getAll((commands) => {
+  const cmd = commands.find((c) => c.name === "open-temp-chat");
+  cachedTempChatShortcut = formatShortcut(cmd?.shortcut || "");
+});
+
 function attachTooltip(btn) {
   if (btn.dataset.gtcTooltip) return;
   btn.dataset.gtcTooltip = "1";
   btn.removeAttribute("mattooltip");
 
   const tooltip = document.getElementById("gtc-tooltip") || createTooltip();
-  const shortcut = getShortcutLabel();
 
-  btn.addEventListener("mouseenter", (e) => {
-    tooltip.innerHTML = `${t("tooltipLabel")} <span style="opacity:0.6;margin-left:6px;font-size:11px;">${shortcut}</span>`;
+  btn.addEventListener("mouseenter", () => {
+    const shortcut = cachedTempChatShortcut || "";
+    tooltip.innerHTML = `${t("tooltipLabel")}${shortcut ? ` <span style="opacity:0.6;margin-left:6px;font-size:11px;">${shortcut}</span>` : ""}`;
     tooltip.style.visibility = "hidden";
     tooltip.style.display = "block";
 
@@ -137,6 +176,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       .then(() => sendResponse({ success: true }))
       .catch((err) => sendResponse({ success: false, error: err.message }));
     return true;
+  }
+
+  if (message.action === "toggle-sidebar") {
+    toggleSidebar();
+    sendResponse({ success: true });
   }
 
   if (message.action === "get-temp-chat-status") {

@@ -4,6 +4,9 @@ chrome.commands.onCommand.addListener(async (command) => {
   if (command === "open-temp-chat") {
     await openTempChat();
   }
+  if (command === "toggle-sidebar") {
+    await toggleSidebar();
+  }
 });
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -14,6 +17,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true;
   }
 
+  if (message.action === "toggle-sidebar") {
+    toggleSidebar()
+      .then(() => sendResponse({ success: true }))
+      .catch((err) => sendResponse({ success: false, error: err.message }));
+    return true;
+  }
 });
 
 async function openTempChat() {
@@ -58,6 +67,68 @@ async function openTempChat() {
     };
 
     chrome.tabs.onUpdated.addListener(listener);
+  }
+}
+
+async function toggleSidebar() {
+  const geminiTabs = await chrome.tabs.query({
+    url: "https://gemini.google.com/*",
+  });
+
+  if (geminiTabs.length > 0) {
+    const tab = geminiTabs[0];
+
+    await chrome.tabs.update(tab.id, { active: true });
+    await chrome.windows.update(tab.windowId, { focused: true });
+
+    try {
+      await chrome.tabs.sendMessage(tab.id, { action: "toggle-sidebar" });
+    } catch (e) {
+      await chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        func: toggleSidebarInPage,
+      });
+    }
+  } else {
+    const newTab = await chrome.tabs.create({ url: GEMINI_URL });
+
+    const listener = async (tabId, changeInfo) => {
+      if (tabId === newTab.id && changeInfo.status === "complete") {
+        chrome.tabs.onUpdated.removeListener(listener);
+
+        setTimeout(async () => {
+          try {
+            await chrome.tabs.sendMessage(newTab.id, { action: "toggle-sidebar" });
+          } catch (e) {
+            await chrome.scripting.executeScript({
+              target: { tabId: newTab.id },
+              func: toggleSidebarInPage,
+            });
+          }
+        }, 1500);
+      }
+    };
+
+    chrome.tabs.onUpdated.addListener(listener);
+  }
+}
+
+function toggleSidebarInPage() {
+  const btn = document.querySelector('[data-test-id="side-nav-menu-button"]');
+  if (btn) {
+    btn.click();
+    return;
+  }
+
+  const buttons = document.querySelectorAll("button");
+  for (const b of buttons) {
+    if (
+      b.getAttribute("aria-label") === "기본 메뉴" ||
+      b.getAttribute("aria-label") === "Main menu"
+    ) {
+      b.click();
+      return;
+    }
   }
 }
 
