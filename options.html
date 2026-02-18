@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="optionsTitle"></title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #0f0f0f;
+      color: #e8e8e8;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      width: 480px;
+      padding: 40px;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 40px;
+    }
+
+    .header-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #4285f4, #34a853);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .header-icon svg {
+      width: 18px;
+      height: 18px;
+      fill: white;
+    }
+
+    h1 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .section {
+      margin-bottom: 32px;
+    }
+
+    .section-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 16px;
+    }
+
+    .card {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .shortcut-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .shortcut-label {
+      font-size: 14px;
+      color: #ccc;
+    }
+
+    .shortcut-display {
+      display: flex;
+      gap: 4px;
+    }
+
+    kbd {
+      background: #2a2a2a;
+      border: 1px solid #444;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-family: inherit;
+      font-size: 13px;
+      color: #e8e8e8;
+    }
+
+    .shortcut-hint {
+      margin-top: 12px;
+      font-size: 12px;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    .shortcut-hint a {
+      color: #4285f4;
+      text-decoration: none;
+    }
+
+    .shortcut-hint a:hover {
+      text-decoration: underline;
+    }
+
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="header-icon">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
+        </svg>
+      </div>
+      <h1>GeminiGhost</h1>
+    </div>
+
+    <div class="section">
+      <div class="section-title" data-i18n="optionsSectionShortcut"></div>
+      <div class="card">
+        <div class="shortcut-row">
+          <span class="shortcut-label" data-i18n="optionsShortcutLabel"></span>
+          <div class="shortcut-display" id="shortcut-display">
+            <kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>T</kbd>
+          </div>
+        </div>
+        <div class="shortcut-hint">
+          <span data-i18n="optionsShortcutHint"></span>
+          <a href="chrome://extensions/shortcuts" id="shortcuts-link" data-i18n="optionsShortcutHintLink"></a>
+        </div>
+      </div>
+    </div>
+
+    
+  <script src="options.js"></script>
+</body>
+</html>
