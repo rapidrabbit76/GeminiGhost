@@ -38,15 +38,26 @@ The temp chat button also gets an upgraded tooltip showing the keyboard shortcut
 
 ## Install
 
-No Chrome Web Store listing yet. Load it manually:
+No Chrome Web Store listing yet. Install from the latest release:
 
-1. Clone or download this repository
+### Option A — Download release zip (recommended)
+
+1. Go to the [latest release](https://github.com/rapidrabbit76/GeminiGhost/releases/latest) and download `GeminiGhost-v*.*.*.zip`
+2. Unzip the downloaded file
+3. Open `chrome://extensions` in Chrome
+4. Enable **Developer mode** (top right toggle)
+5. Click **Load unpacked**
+6. Select the unzipped `GeminiGhost-v*.*.*` folder
+
+### Option B — Clone the repository
+
+1. Clone this repository: `git clone https://github.com/rapidrabbit76/GeminiGhost.git`
 2. Open `chrome://extensions` in Chrome
 3. Enable **Developer mode** (top right toggle)
 4. Click **Load unpacked**
-5. Select the project folder
+5. Select the cloned folder
 
-To update after pulling changes: click the ↺ reload button on the extension card.
+To update: download the new release zip, unzip it, and click the ↺ reload button on the extension card — then select the new folder.
 
 ---
 
