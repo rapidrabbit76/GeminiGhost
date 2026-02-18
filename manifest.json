@@ -24,9 +24,16 @@
     "open-temp-chat": {
       "suggested_key": {
         "default": "Ctrl+Shift+O",
-        "mac": "Ctrl+Shift+O"
+        "mac": "MacCtrl+Shift+O"
       },
       "description": "__MSG_openTempChatDescription__"
+    },
+    "toggle-sidebar": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+S",
+        "mac": "MacCtrl+Shift+S"
+      },
+      "description": "__MSG_toggleSidebarDescription__"
     }
   },
 

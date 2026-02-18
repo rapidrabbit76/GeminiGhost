@@ -37,5 +37,11 @@
   },
   "tooltipLabel": {
     "message": "임시 채팅"
+  },
+  "toggleSidebarDescription": {
+    "message": "Gemini 사이드바 토글"
+  },
+  "optionsSidebarShortcutLabel": {
+    "message": "사이드바 토글"
   }
 }

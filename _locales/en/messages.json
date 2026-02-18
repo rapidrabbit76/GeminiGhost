@@ -37,5 +37,11 @@
   },
   "tooltipLabel": {
     "message": "Temporary Chat"
+  },
+  "toggleSidebarDescription": {
+    "message": "Toggle Gemini Sidebar"
+  },
+  "optionsSidebarShortcutLabel": {
+    "message": "Toggle Sidebar"
   }
 }
