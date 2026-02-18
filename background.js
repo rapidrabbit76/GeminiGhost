@@ -1,0 +1,90 @@
+const GEMINI_URL = "https://gemini.google.com/app";
+
+chrome.commands.onCommand.addListener(async (command) => {
+  if (command === "open-temp-chat") {
+    await openTempChat();
+  }
+});
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === "open-temp-chat") {
+    openTempChat()
+      .then(() => sendResponse({ success: true }))
+      .catch((err) => sendResponse({ success: false, error: err.message }));
+    return true;
+  }
+
+});
+
+async function openTempChat() {
+  const geminiTabs = await chrome.tabs.query({
+    url: "https://gemini.google.com/*",
+  });
+
+  if (geminiTabs.length > 0) {
+    const tab = geminiTabs[0];
+
+    await chrome.tabs.update(tab.id, { active: true });
+    await chrome.windows.update(tab.windowId, { focused: true });
+
+    try {
+      await chrome.tabs.sendMessage(tab.id, { action: "activate-temp-chat" });
+    } catch (e) {
+      await chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        func: activateTempChatInPage,
+      });
+    }
+  } else {
+    const newTab = await chrome.tabs.create({ url: GEMINI_URL });
+
+    const listener = async (tabId, changeInfo) => {
+      if (tabId === newTab.id && changeInfo.status === "complete") {
+        chrome.tabs.onUpdated.removeListener(listener);
+
+        setTimeout(async () => {
+          try {
+            await chrome.tabs.sendMessage(newTab.id, {
+              action: "activate-temp-chat",
+            });
+          } catch (e) {
+            await chrome.scripting.executeScript({
+              target: { tabId: newTab.id },
+              func: activateTempChatInPage,
+            });
+          }
+        }, 1500);
+      }
+    };
+
+    chrome.tabs.onUpdated.addListener(listener);
+  }
+}
+
+function activateTempChatInPage() {
+  const SELECTORS = [
+    '[data-test-id="temp-chat-button"]',
+    '[aria-label="임시 채팅"]',
+    '[aria-label="Temporary chat"]',
+    ".temp-chat-button",
+  ];
+
+  for (const selector of SELECTORS) {
+    const btn = document.querySelector(selector);
+    if (btn) {
+      if (!btn.classList.contains("temp-chat-on")) btn.click();
+      return;
+    }
+  }
+
+  const buttons = document.querySelectorAll("button");
+  for (const btn of buttons) {
+    if (
+      btn.getAttribute("mattooltip") === "임시 채팅" ||
+      btn.getAttribute("mattooltip") === "Temporary chat"
+    ) {
+      if (!btn.classList.contains("temp-chat-on")) btn.click();
+      return;
+    }
+  }
+}
