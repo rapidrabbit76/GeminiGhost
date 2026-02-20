@@ -37,6 +37,12 @@ chrome.commands.getAll((commands) => {
     sidebarCmd?.shortcut,
     isMac ? "<kbd>⌃⇧S</kbd>" : "<kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>S</kbd>",
   );
+
+  const modelCmd = commands.find((c) => c.name === "cycle-model");
+  document.getElementById("model-shortcut-display").innerHTML = renderShortcut(
+    modelCmd?.shortcut,
+    "<kbd>—</kbd>",
+  );
 });
 
 document.getElementById("shortcuts-link").addEventListener("click", (e) => {

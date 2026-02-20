@@ -43,5 +43,11 @@
   },
   "optionsSidebarShortcutLabel": {
     "message": "사이드바 토글"
+  },
+  "cycleModelDescription": {
+    "message": "다음 Gemini 모델로 전환"
+  },
+  "optionsModelShortcutLabel": {
+    "message": "모델 순환"
   }
 }

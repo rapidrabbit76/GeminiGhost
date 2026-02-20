@@ -43,5 +43,11 @@
   },
   "optionsSidebarShortcutLabel": {
     "message": "Toggle Sidebar"
+  },
+  "cycleModelDescription": {
+    "message": "Cycle to Next Gemini Model"
+  },
+  "optionsModelShortcutLabel": {
+    "message": "Cycle Model"
   }
 }

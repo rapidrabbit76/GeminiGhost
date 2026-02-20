@@ -43,5 +43,11 @@
   },
   "optionsSidebarShortcutLabel": {
     "message": "サイドバー切り替え"
+  },
+  "cycleModelDescription": {
+    "message": "次のGeminiモデルに切り替え"
+  },
+  "optionsModelShortcutLabel": {
+    "message": "モデル切り替え"
   }
 }
