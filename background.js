@@ -7,6 +7,9 @@ chrome.commands.onCommand.addListener(async (command) => {
   if (command === "toggle-sidebar") {
     await toggleSidebar();
   }
+  if (command === "cycle-model") {
+    await dispatchToGeminiTab("cycle-model");
+  }
 });
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -19,6 +22,21 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
   if (message.action === "toggle-sidebar") {
     toggleSidebar()
+      .then(() => sendResponse({ success: true }))
+      .catch((err) => sendResponse({ success: false, error: err.message }));
+    return true;
+  }
+
+  if (message.action === "get-shortcut") {
+    chrome.commands.getAll((commands) => {
+      const cmd = commands.find((c) => c.name === message.commandName);
+      sendResponse({ shortcut: cmd?.shortcut || "" });
+    });
+    return true;
+  }
+
+  if (message.action === "cycle-model") {
+    dispatchToGeminiTab("cycle-model")
       .then(() => sendResponse({ success: true }))
       .catch((err) => sendResponse({ success: false, error: err.message }));
     return true;
@@ -62,6 +80,35 @@ async function openTempChat() {
               func: activateTempChatInPage,
             });
           }
+        }, 1500);
+      }
+    };
+
+    chrome.tabs.onUpdated.addListener(listener);
+  }
+}
+
+async function dispatchToGeminiTab(action) {
+  const geminiTabs = await chrome.tabs.query({
+    url: "https://gemini.google.com/*",
+  });
+
+  if (geminiTabs.length > 0) {
+    const tab = geminiTabs[0];
+
+    await chrome.tabs.update(tab.id, { active: true });
+    await chrome.windows.update(tab.windowId, { focused: true });
+
+    await chrome.tabs.sendMessage(tab.id, { action });
+  } else {
+    const newTab = await chrome.tabs.create({ url: GEMINI_URL });
+
+    const listener = async (tabId, changeInfo) => {
+      if (tabId === newTab.id && changeInfo.status === "complete") {
+        chrome.tabs.onUpdated.removeListener(listener);
+
+        setTimeout(async () => {
+          await chrome.tabs.sendMessage(newTab.id, { action });
         }, 1500);
       }
     };

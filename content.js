@@ -1,6 +1,8 @@
 const SIDEBAR_BUTTON_SELECTOR = '[data-test-id="side-nav-menu-button"]';
 const SIDEBAR_BUTTON_ARIA_LABELS = ["기본 메뉴", "Main menu"];
 
+const MODEL_MENU_BUTTON_SELECTOR = '[data-test-id="bard-mode-menu-button"]';
+
 const TEMP_CHAT_SELECTORS = [
   '[data-test-id="temp-chat-button"]',
   '[aria-label="임시 채팅"]',
@@ -88,6 +90,98 @@ function toggleSidebar() {
   }
 }
 
+function findModelMenuButton() {
+  return document.querySelector(MODEL_MENU_BUTTON_SELECTOR);
+}
+
+function getCurrentModelLabel() {
+  const btn = findModelMenuButton();
+  if (!btn) return null;
+  const container = btn.querySelector('[data-test-id="logo-pill-label-container"]');
+  const span = container?.querySelector("span");
+  return span?.textContent?.trim() || null;
+}
+
+function isModelMenuOpen() {
+  const btn = findModelMenuButton();
+  return btn?.getAttribute("aria-expanded") === "true";
+}
+
+function findVisibleMenuPanel() {
+  const panels = document.querySelectorAll(".mat-mdc-menu-panel");
+  for (const panel of panels) {
+    const style = window.getComputedStyle(panel);
+    if (style.display !== "none" && style.visibility !== "hidden" && panel.offsetParent !== null) {
+      return panel;
+    }
+  }
+  return null;
+}
+
+function waitForMenuPanel(timeout = 3000) {
+  return new Promise((resolve, reject) => {
+    const existing = findVisibleMenuPanel();
+    if (existing) {
+      resolve(existing);
+      return;
+    }
+
+    const deadline = Date.now() + timeout;
+
+    const check = () => {
+      const panel = findVisibleMenuPanel();
+      if (panel) return panel;
+      return null;
+    };
+
+    const observer = new MutationObserver(() => {
+      const panel = check();
+      if (panel) {
+        observer.disconnect();
+        resolve(panel);
+      } else if (Date.now() > deadline) {
+        observer.disconnect();
+        reject(new Error("모델 메뉴 패널을 찾지 못했습니다"));
+      }
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["style", "class"],
+    });
+  });
+}
+
+async function cycleModel() {
+  const menuBtn = findModelMenuButton();
+  if (!menuBtn) return;
+
+  const currentLabel = getCurrentModelLabel();
+
+  if (!isModelMenuOpen()) {
+    menuBtn.click();
+  }
+
+  const panel = await waitForMenuPanel();
+
+  const items = Array.from(
+    panel.querySelectorAll("[role='menuitem'], button.mat-mdc-menu-item, button[mat-menu-item]"),
+  );
+  if (items.length === 0) {
+    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+    return;
+  }
+
+  const currentIndex = currentLabel
+    ? items.findIndex((item) => item.textContent?.trim().includes(currentLabel))
+    : -1;
+
+  const nextIndex = currentIndex >= 0 ? (currentIndex + 1) % items.length : 0;
+  items[nextIndex].click();
+}
+
 function t(key) {
   return chrome.i18n.getMessage(key) || key;
 }
@@ -129,9 +223,9 @@ function createTooltip() {
 
 let cachedTempChatShortcut = null;
 
-chrome.commands.getAll((commands) => {
-  const cmd = commands.find((c) => c.name === "open-temp-chat");
-  cachedTempChatShortcut = formatShortcut(cmd?.shortcut || "");
+chrome.runtime.sendMessage({ action: "get-shortcut", commandName: "open-temp-chat" }, (res) => {
+  if (chrome.runtime.lastError) return;
+  cachedTempChatShortcut = formatShortcut(res?.shortcut || "");
 });
 
 function attachTooltip(btn) {
@@ -181,6 +275,13 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === "toggle-sidebar") {
     toggleSidebar();
     sendResponse({ success: true });
+  }
+
+  if (message.action === "cycle-model") {
+    cycleModel()
+      .then(() => sendResponse({ success: true }))
+      .catch((err) => sendResponse({ success: false, error: err.message }));
+    return true;
   }
 
   if (message.action === "get-temp-chat-status") {
